@@ -1,15 +1,13 @@
 import Stripe from 'stripe';
 import Product from './components/Product';
-import { GetServerSideProps } from 'next';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2023-08-16',
-});
 
 const getProducts = async () => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+    apiVersion: '2023-08-16',
+  });
   const products = await stripe.products.list();
 
-  return await Promise.all(
+  return Promise.all(
     products.data.map(async (product) => {
       const price = await stripe.prices.list({
         product: product.id,
@@ -21,41 +19,30 @@ const getProducts = async () => {
         description: product.description,
         price: price.data[0],
         image: product.images[0],
-        currency: price.data[0].currency,
+        currency: price.data[0]?.currency, // Handle potential undefined
       };
     })
   );
 };
 
-interface HomeProps {
-  products: {
-    id: string;
-    name: string;
-    description: string;
-    price: {
-      currency: string;
-      unit_amount: number;
-    };
-    image: string;
-  }[];
-}
+export default async function Home() {
+  let products = [] as Array<any>;
 
-const Home: React.FC<HomeProps> = ({ products }) => {
+  try {
+    products = await getProducts();
+  } catch (error) {
+    console.error('Error fetching products:', error);
+  }
+
   return (
     <main>
-      {products.map((product) => (
-        <Product key={product.id} {...product} />
-      ))}
+      {products.length > 0 ? (
+        products.map((product) => (
+          <Product key={product.id} {...product} />
+        ))
+      ) : (
+        <p>No products available.</p>
+      )}
     </main>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const products = await getProducts();
-
-  return {
-    props: { products },
-  };
-};
-
-export default Home;
+}
