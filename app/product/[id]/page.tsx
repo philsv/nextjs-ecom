@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { ProductProps } from 'types/ProductTypes';
 import formatPrice from 'util/PriceFormat';
+import AddCart from './AddCart';
 
 type SearchParamTypes = {
     searchParams: ProductProps
@@ -24,7 +25,7 @@ export default async function Product({ searchParams }: SearchParamTypes) {
                 <div className="flex gap-2">
                     <h2 className="text-sm text-teal-700">{searchParams.unit_amount && formatPrice(searchParams.unit_amount, "USD")}</h2>
                 </div>
-                <button className="my-12 text-white py-2 px-6 font-medmium rounded-md bg-teal-700 hover:bg-teal-600">Add to Cart</button>
+                <AddCart {...searchParams} />
             </div>
         </div>
     );
