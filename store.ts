@@ -15,8 +15,10 @@ type CartState = {
     cart: CartItem[]
     toggleCart: () => void
     addProduct: (product: CartItem) => void
+    removeProduct: (product: CartItem) => void
 }
 
+// Persist cart state in local storage and rehydrate on page load if it exists
 export const useCartStore = create<CartState>()(
     persist(
         (set) => ({
@@ -24,7 +26,7 @@ export const useCartStore = create<CartState>()(
             isOpen: false,
             toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
             addProduct: (product) => set((state) => {
-
+                // Check if item exists in cart and add quantity by 1
                 const existingItem = state.cart.find(cartItem => cartItem.id === product.id)
 
                 if (existingItem) {
@@ -36,7 +38,26 @@ export const useCartStore = create<CartState>()(
                     })
                     return { cart: updatedCart }
                 } else {
+                    // Add item to cart
                     return { cart: [...state.cart, { ...product, quantity: 1 }] }
+                }
+            }),
+            removeProduct: (product) => set((state) => {
+                // Check if item exists in cart and remove quantity by 1
+                const existingItem = state.cart.find(cartItem => cartItem.id === product.id)
+
+                if (existingItem && existingItem.quantity > 1) {
+                    const updatedCart = state.cart.map(cartItem => {
+                        if (cartItem.id === product.id) {
+                            return { ...cartItem, quantity: cartItem.quantity - 1 }
+                        }
+                        return cartItem
+                    }).filter(cartItem => cartItem.quantity > 0)
+                    return { cart: updatedCart }
+                } else {
+                    // Remove item from cart
+                    const filteredCart = state.cart.filter(cartItem => cartItem.id !== product.id)
+                    return { cart: filteredCart }
                 }
             }),
         }),
