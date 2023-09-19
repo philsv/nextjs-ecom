@@ -3,19 +3,38 @@
 import Image from 'next/image'
 import { useCartStore } from 'store'
 import formatPrice from 'util/PriceFormat'
-import { IoAddCircle, IoRemoveCircle } from 'react-icons/io5'
+import { AiOutlinePlusCircle, AiOutlineMinusCircle } from 'react-icons/ai'
 import basket from 'public/basket.png'
+import { motion, AnimatePresence } from 'framer-motion'
 
 
 export default function Cart() {
+
     const cartStore = useCartStore()
+
+    const totalPrice = cartStore.cart.reduce((acc, item) => {
+        return acc + item.unit_amount * item.quantity
+    }, 0)
+
     return (
-        <div onClick={() => cartStore.toggleCart()}
+        // Overlay for the cart
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => cartStore.toggleCart()}
             className="fixed w-full h-screen left-0 top-0 bg-black/25">
-            <div onClick={(e) => e.stopPropagation()}
+            <motion.div
+                layout
+                onClick={(e) => e.stopPropagation()}
                 className="bg-white absolute right-0 top-0 w-1/4 h-screen p-12 overflow-y-scroll text-gray-700">
+
+                {/** Button to close the cart */}
                 {cartStore.cart.map((item) => (
-                    <div key={item.id} className="flex py-4 gap-4">
+                    <motion.div
+                        layout
+                        key={item.id}
+                        className="flex py-4 gap-4">
                         <Image
                             className="rounded-md"
                             src={item.image}
@@ -23,7 +42,7 @@ export default function Cart() {
                             width={80}
                             height={80}
                         />
-                        <div>
+                        <motion.div layout>
                             <h3>{item.name}</h3>
 
                             <div className="flex gap-2 items-center">
@@ -39,7 +58,7 @@ export default function Cart() {
                                     })
                                 }
                                 >
-                                    <IoRemoveCircle />
+                                    <AiOutlineMinusCircle />
                                 </button>
 
                                 <button onClick={() =>
@@ -52,7 +71,7 @@ export default function Cart() {
                                     })
                                 }
                                 >
-                                    <IoAddCircle />
+                                    <AiOutlinePlusCircle />
                                 </button>
 
                             </div>
@@ -60,27 +79,37 @@ export default function Cart() {
                             <p className="text-sm">
                                 {formatPrice(item.unit_amount, "USD")}
                             </p>
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 ))}
+
                 {cartStore.cart.length > 0 && (
-                    <button className="py-2 mt-4 bg-teal-700 w-full rounded-md text-white">
-                        Checkout
-                    </button>
+                    <motion.div layout>
+                        <p>Total: {formatPrice(totalPrice, "USD")}</p>
+                        <button className="py-2 mt-4 bg-teal-700 w-full rounded-md text-white">
+                            Checkout
+                        </button>
+                    </motion.div>
                 )}
-                {cartStore.cart.length === 0 && (
-                    <div className="flex flex-col items-center gap-12 text-2xl font-medium">
-                        <h1>Your cart is empty</h1>
-                        <Image
-                            src={basket}
-                            alt="Empty cart"
-                            width={110}
-                            height={110}
-                        />
-                        <p className="text-center text-sm">Add some products from our new arrivals</p>
-                    </div>
-                )}
-            </div>
-        </div >
+                <AnimatePresence>
+                    {cartStore.cart.length === 0 && (
+                        <motion.div
+                            animate={{ scale: 1, opacity: 0.75 }}
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            exit={{ scale: 0.5, opacity: 0 }}
+                            className="flex flex-col items-center gap-12 text-2xl font-medium">
+                            <h1>Your cart is empty</h1>
+                            <Image
+                                src={basket}
+                                alt="Empty cart"
+                                width={110}
+                                height={110}
+                            />
+                            <p className="text-center text-sm">Add some products from our new arrivals</p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.div>
+        </motion.div>
     )
 }
