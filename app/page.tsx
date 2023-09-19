@@ -19,7 +19,9 @@ const getProducts = async () => {
         description: product.description,
         price: price.data[0],
         image: product.images[0],
-        currency: price.data[0]?.currency, // Handle potential undefined
+        unit_amount: price.data[0]?.unit_amount,
+        currency: price.data[0]?.currency,
+        metadata: product.metadata,
       };
     })
   );

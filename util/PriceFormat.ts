@@ -1,8 +1,9 @@
-const formatPrice = (price: number, currency_type: string) => {
+const formatPrice = (unit_amount: number, currency_type: string) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency_type,
-  }).format(price / 100);
+  // sourcery skip: binary-operator-identity
+  }).format(unit_amount / 100);
 }
 
 export default formatPrice;
