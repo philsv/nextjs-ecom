@@ -1,15 +1,9 @@
 'use client'
 
 import { useCartStore } from "store"
-import { useState } from "react"
+import { AddCartTypes } from 'types/AddCartTypes';
 
-type AddCartTypes = {
-    id: string
-    name: string
-    image: string
-    quantity: number
-    unit_amount: number
-}
+
 
 export default function AddCart({
     id,
@@ -23,7 +17,7 @@ export default function AddCart({
     return (
         <button
             onClick={() => cartStore.addProduct({ id, image, unit_amount, quantity, name })}
-            className="bg-teal-700 text-white py-2 px-4 rounded-md font-medium">
+            className="bg-teal-700 text-white py-2 px-5 rounded-md font-medium mt-2">
             Add to Cart
         </button>
     )

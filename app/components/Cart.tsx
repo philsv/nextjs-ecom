@@ -6,6 +6,7 @@ import formatPrice from 'util/PriceFormat'
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from 'react-icons/ai'
 import basket from 'public/basket.png'
 import { motion, AnimatePresence } from 'framer-motion'
+import Checkout from './Checkout'
 
 
 export default function Cart() {
@@ -24,7 +25,7 @@ export default function Cart() {
             exit={{ opacity: 0 }}
             onClick={() => cartStore.toggleCart()}
             className="fixed w-full h-screen left-0 top-0 bg-black/25">
-            
+
             {/** Cart */}
             <motion.div
                 layout
@@ -33,69 +34,82 @@ export default function Cart() {
 
                 {/** Inside the cart */}
                 <button
-                    onClick={() => cartStore.toggleCart()} 
-                    className="text-sm font-bold pb-12">🙂</button>
-                {cartStore.cart.map((item) => (
-                    <motion.div
-                        layout
-                        key={item.id}
-                        className="flex py-4 gap-4">
-                        <Image
-                            className="rounded-md"
-                            src={item.image}
-                            alt={item.name}
-                            width={80}
-                            height={80}
-                        />
-                        <motion.div layout>
-                            <h3>{item.name}</h3>
+                    onClick={() => cartStore.toggleCart()}
+                    className="text-2xl font-bold pb-12">👈</button>
 
-                            <div className="flex gap-2 items-center">
-                                <h2>{item.quantity}</h2>
+                {/** Cart Items */}
+                {cartStore.onCheckout === "cart" && (
+                    <>
+                        {cartStore.cart.map((item) => (
+                            <motion.div
+                                layout
+                                key={item.id}
+                                className="flex py-4 gap-4">
+                                <Image
+                                    className="rounded-md"
+                                    src={item.image}
+                                    alt={item.name}
+                                    width={80}
+                                    height={80}
+                                />
+                                <motion.div layout>
+                                    <h3>{item.name}</h3>
 
-                                <button onClick={() =>
-                                    cartStore.removeProduct({
-                                        id: item.id,
-                                        image: item.image,
-                                        name: item.name,
-                                        unit_amount: item.unit_amount,
-                                        quantity: item.quantity,
-                                    })
-                                }
-                                >
-                                    <AiOutlineMinusCircle />
-                                </button>
+                                    <div className="flex gap-2 items-center">
+                                        <h2>{item.quantity}</h2>
 
-                                <button onClick={() =>
-                                    cartStore.addProduct({
-                                        id: item.id,
-                                        image: item.image,
-                                        name: item.name,
-                                        unit_amount: item.unit_amount,
-                                        quantity: item.quantity,
-                                    })
-                                }
-                                >
-                                    <AiOutlinePlusCircle />
-                                </button>
+                                        <button onClick={() =>
+                                            cartStore.removeProduct({
+                                                id: item.id,
+                                                image: item.image,
+                                                name: item.name,
+                                                unit_amount: item.unit_amount,
+                                                quantity: item.quantity,
+                                            })
+                                        }
+                                        >
+                                            <AiOutlineMinusCircle />
+                                        </button>
 
-                            </div>
+                                        <button onClick={() =>
+                                            cartStore.addProduct({
+                                                id: item.id,
+                                                image: item.image,
+                                                name: item.name,
+                                                unit_amount: item.unit_amount,
+                                                quantity: item.quantity,
+                                            })
+                                        }
+                                        >
+                                            <AiOutlinePlusCircle />
+                                        </button>
 
-                            <p className="text-sm">
-                                {formatPrice(item.unit_amount, "USD")}
-                            </p>
-                        </motion.div>
-                    </motion.div>
-                ))}
+                                    </div>
+
+                                    <p className="text-sm">
+                                        {formatPrice(item.unit_amount, "USD")}
+                                    </p>
+                                </motion.div>
+                            </motion.div>
+                        ))}
+                    </>
+                )}
 
                 {cartStore.cart.length > 0 && (
                     <motion.div layout>
                         <p>Total: {formatPrice(totalPrice, "USD")}</p>
-                        <button className="py-2 mt-4 bg-teal-700 w-full rounded-md text-white">
+
+                        <button
+                            onClick={() => cartStore.setOnCheckout("checkout")}
+                            className="py-2 mt-4 bg-teal-700 w-full rounded-md text-white">
                             Checkout
                         </button>
                     </motion.div>
                 )}
+
+                {/** Checkout Form */}
+                {cartStore.onCheckout === "checkout" && <Checkout />}
+
                 <AnimatePresence>
                     {cartStore.cart.length === 0 && (
                         <motion.div

@@ -14,7 +14,7 @@ export default function Nav({ user }: Session) {
     const cartStore = useCartStore()
     return (
         <nav className="flex justify-between items-center py-12">
-            <Link href="/">🤗</Link>
+            <Link className="text-2xl" href="/">🐦</Link>
             <ul className="flex items-center gap-12">
                 {/* Toggle the cart */}
                 <li onClick={() => cartStore.toggleCart()} className="flex item-center text-3xl relative curser-pointer">

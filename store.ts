@@ -16,6 +16,10 @@ type CartState = {
     toggleCart: () => void
     addProduct: (product: CartItem) => void
     removeProduct: (product: CartItem) => void
+    paymentIntent: string
+    onCheckout: string
+    setPaymentIntent: (paymentIntent: string) => void
+    setOnCheckout: (onCheckout: string) => void
 }
 
 // Persist cart state in local storage and rehydrate on page load if it exists
@@ -24,6 +28,8 @@ export const useCartStore = create<CartState>()(
         (set) => ({
             cart: [],
             isOpen: false,
+            paymentIntent: '',
+            onCheckout: "cart",
             toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
             addProduct: (product) => set((state) => {
                 // Check if item exists in cart and add quantity by 1
@@ -60,6 +66,8 @@ export const useCartStore = create<CartState>()(
                     return { cart: filteredCart }
                 }
             }),
+            setPaymentIntent: (paymentIntent) => set(() => ({ paymentIntent: paymentIntent })),
+            setOnCheckout: (onCheckout) => set(() => ({ onCheckout: onCheckout })),
         }),
         { name: 'cart-store' }
     )

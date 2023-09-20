@@ -19,7 +19,6 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const session = await getServerSession(authOptions)
-  console.log(session)
   return (
     <html lang="en">
       <body className={`mx-4 md:mx-16 lg:mx-36 ${roboto.className}`}>

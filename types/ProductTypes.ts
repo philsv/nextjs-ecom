@@ -5,7 +5,7 @@
     image: string;
     currency: string;
     unit_amount: number;
-    quantity?: number;
+    quantity: number;
     metadata: string;
   }
 

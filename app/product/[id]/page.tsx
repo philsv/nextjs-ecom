@@ -9,7 +9,7 @@ type SearchParamTypes = {
 
 export default async function Product({ searchParams }: SearchParamTypes) {
     return (
-        <div className="flex justify-between gapp-24 p-12 text-gray-700">
+        <div className="flex flex-col lg:flex-row justify-between gapp-24 p-12 text-gray-700">
             <Image
                 src={searchParams.image}
                 alt={searchParams.name}
