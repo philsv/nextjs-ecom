@@ -3,7 +3,7 @@
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js'
 import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js'
 import { useCartStore } from 'store'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 
@@ -13,6 +13,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!)
 export default function Checkout() {
     const cartStore = useCartStore()
     const router = useRouter()
+    const [clientSecret, setClientSecret] = useState<string>("")
 
     useEffect(() => {
         // Create PaymentIntent as soon as the page loads
@@ -23,7 +24,7 @@ export default function Checkout() {
             },
             body: JSON.stringify({
                 items: cartStore.cart,
-                payment_intent_id: cartStore.paymentIntent,
+                paymentIntentId: cartStore.paymentIntent,
             })
         }).then((res) => {
             if (res.status === 403) {
@@ -31,7 +32,8 @@ export default function Checkout() {
             }
             return res.json()
         }).then((data) => {
-            console.log(data)
+            setClientSecret(data.paymentIntentId.client_secret)
+            cartStore.setPaymentIntent(data.paymentIntent.id)
         })
     }, [])
 
